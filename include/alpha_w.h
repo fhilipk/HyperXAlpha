@@ -1,10 +1,8 @@
 #ifndef __ALPHA_W_H
 #define __ALPHA_W_H
 
-#include <array>
 #include <cstring>
 #include <hidapi/hidapi.h>
-#include <iomanip>
 #include <iostream>
 #include <libudev.h>
 #include <stdexcept>
@@ -50,7 +48,11 @@ public:
 		hid_exit();
 	}
 
-	int read(unsigned char *buffer) { return hid_read(handle, buffer, 32); }
+	int read(unsigned char *buffer) {
+		// Use hid_read_timeout from upstream for a 1-second timeout
+		return hid_read_timeout(handle, buffer, 32, 1000);
+	}
+
 
 	void send_command(commands cmd) {
 		//std::cout << "Sending command 0x" << std::hex << (int)cmd << std::endl;

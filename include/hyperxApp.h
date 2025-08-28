@@ -1,19 +1,20 @@
 #ifndef HYPERXAPP_H
 #define HYPERXAPP_H
 
-#include <wx/wx.h>
 #include "hyperxFrame.h"
+#include <wx/wx.h>
 
 class hyperxApp : public wxApp {
 public:
-	hyperxApp();
-	~hyperxApp();
+  hyperxApp();          // original constructor
+  hyperxApp(bool);      // upstream constructor
+  ~hyperxApp();
 
-	virtual bool OnInit();
+  virtual bool OnInit();
 
 private:
-	hyperxFrame *m_frame;
+  hyperxFrame *m_frame;
+  bool systray;         // upstream addition
 };
-DECLARE_APP(hyperxApp)
 
 #endif

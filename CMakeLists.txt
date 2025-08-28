@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project (HyperX)
+project(HyperX)
 
 set(C++_STANDARD 17)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/bin)
@@ -11,7 +11,9 @@ find_package(PkgConfig REQUIRED)
 find_package(wxWidgets REQUIRED COMPONENTS core base)
 find_package(hidapi REQUIRED)
 
-add_executable(HyperX src/hyperxApp.cpp src/hyperxFrame.cpp src/SwitchCtrl.cpp src/dialog.cpp)
+add_executable(HyperX src/main.cpp src/hyperxApp.cpp src/hyperxFrame.cpp
+                      src/SwitchCtrl.cpp src/dialog.cpp)
 include(${wxWidgets_USE_FILE})
-target_link_libraries(HyperX PRIVATE hidapi::libusb ${wxWidgets_LIBRARIES})
-include_directories(HyperX PRIVATE ${CMAKE_HOME_DIRECTORY}/include ${wxWidgets_INCLUDE_DIRS})
+target_link_libraries(HyperX PRIVATE hidapi::hidapi ${wxWidgets_LIBRARIES})
+include_directories(HyperX PRIVATE ${CMAKE_HOME_DIRECTORY}/include
+                    ${wxWidgets_INCLUDE_DIRS})

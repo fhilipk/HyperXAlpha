@@ -1,10 +1,10 @@
 #ifndef __HYPERXFRAME_H
 #define __HYPERXFRAME_H
 
+#include <atomic>
 #include <thread>
 #include <wx/taskbar.h>
 #include <wx/wx.h>
-#include <atomic>
 
 #include "SwitchCtrl.h"
 #include "alpha_w.h"
@@ -12,28 +12,25 @@
 // main window
 class hyperxFrame : public wxFrame {
 public:
-	hyperxFrame(const wxChar *title, const wxPoint &pos, const wxSize &size, const wxChar *runDir);
+	// merge your fork constructor with upstream additions
+	hyperxFrame(const wxChar *title, const wxPoint &pos, const wxSize &size,
+				const wxChar *runDir, wxApp *app = nullptr, bool useTray = false);
 
 private:
+	// optional app pointer and tray flag from upstream
+	wxApp *app;
+	bool useTray = false;
+
 	// Main layout
-	wxTaskBarIcon taskBarIcon;
+	wxTaskBarIcon *taskBarIcon;
+	bool taskAvailable = false;
 	wxMenu *taskMenu;
 	wxIcon wicon;
 	wxButton *quitButton;
 	wxButton *hideButton;
 	wxString m_runDir;
-	wxStaticText *statusLabel;
-	bool dialogShown = false;
-
-	// audiobox
-	wxStaticText *micMuteLabel;
-	wxSwitchCtrl *micMute;
-	wxStaticText *muteLabel;
-	wxSwitchCtrl *mute;
-	wxStaticText *micVolumeLabel;
-	wxSlider *micVolume;
-	wxStaticText *volumeLabel;
-	wxSlider *volume;
+	wxStaticText *statusLabel;      // fork
+	wxStaticText *connectedLabel;   // upstream
 
 	// features box
 	wxStaticText *sleepTimerLabel;
@@ -53,33 +50,36 @@ private:
 	bool voice;
 	bool mic_monitor;
 	unsigned long identifier;
-	const wxArrayString choices = {_T("30 Minutes"), _T("20 Minutes"), _T("10 Minutes"), _T("Never")};
+	const wxArrayString choices = {_T("10 Minutes"), _T("20 Minutes"),
+		_T("30 Minutes"), _T("Never")};
 
-	// callback functions for controls
-	void createFrame();
-	void setTaskIcon();
-	void onConnect();
-	void showWindow(wxTaskBarIconEvent &event);
-	void showMenu(wxTaskBarIconEvent &event);
-	void on_micMute(wxCommandEvent &event);
-	void on_micVolume(wxCommandEvent &event);
-	void on_mute(wxCommandEvent &event);
-	void on_volume(wxCommandEvent &event);
-	void sleepChoice(wxCommandEvent &event);
-	void voiceSwitch(wxCommandEvent &event); // hide button
-	void micSwitch(wxCommandEvent &event);   // hide button
-	void quit(wxCommandEvent &event);        // quit button
+		// callback functions for controls
+		void createFrame();
+		void setTaskIcon();
+		void onConnect();
+		void onDisconnect();           // upstream
+		void showWindow(wxTaskBarIconEvent &event);
+		void showMenu(wxTaskBarIconEvent &event);
+		void on_micMute(wxCommandEvent &event);
+		void on_micVolume(wxCommandEvent &event);
+		void on_mute(wxCommandEvent &event);
+		void on_volume(wxCommandEvent &event);
+		void sleepChoice(wxCommandEvent &event);
+		void voiceSwitch(wxCommandEvent &event); // hide button
+		void micSwitch(wxCommandEvent &event);   // hide button
+		void quit(wxCommandEvent &event);        // quit button
 
-	// timer Event 5 seconds
-	wxTimer *dialogTimer;
-	wxTimer *timer;
-	void on_timer(wxTimerEvent &event);
+		// timer Event 5 seconds
+		wxTimer *dialogTimer;          // fork
+		wxTimer *timer;
+		void on_timer(wxTimerEvent &event);
 
-	// read loop for headset
-	bool wanted;
-	std::atomic<bool> running;
-	std::thread t;
-	std::thread pt;
-	void read_loop();
+		// read loop for headset
+		bool wanted;                   // fork
+		std::atomic<bool> running;
+		std::thread t;
+		std::thread pt;                // fork
+		void read_loop();
 };
+
 #endif
