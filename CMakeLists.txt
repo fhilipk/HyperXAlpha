@@ -14,7 +14,6 @@ find_package(wxWidgets REQUIRED COMPONENTS core base)
 find_package(hidapi REQUIRED)
 
 add_executable(HyperX
-    src/main.cpp
     src/hyperxApp.cpp
     src/hyperxFrame.cpp
     src/SwitchCtrl.cpp
