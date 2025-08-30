@@ -1,85 +1,85 @@
 #ifndef __HYPERXFRAME_H
 #define __HYPERXFRAME_H
 
-#include <atomic>
 #include <thread>
-#include <wx/taskbar.h>
+#include <atomic>
 #include <wx/wx.h>
-
+#include <wx/taskbar.h>
+#include <wx/timer.h>
+#include <wx/choice.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
 #include "SwitchCtrl.h"
 #include "alpha_w.h"
+#include "dialog.h"
 
-// main window
+// forward declare
+class headset;
+class hyperxApp;
+
 class hyperxFrame : public wxFrame {
 public:
-	// merge your fork constructor with upstream additions
 	hyperxFrame(const wxChar *title, const wxPoint &pos, const wxSize &size,
-				const wxChar *runDir, wxApp *app = nullptr, bool useTray = false);
+				const wxChar *runDir, wxApp *app, bool useTray);
+
+	void onConnect();
+	void onDisconnect();
 
 private:
-	// optional app pointer and tray flag from upstream
-	wxApp *app;
-	bool useTray = false;
+	void createFrame();
+	void setTaskIcon();
+	void showWindow(wxTaskBarIconEvent &event);
+	void showMenu(wxTaskBarIconEvent &event);
 
-	// Main layout
-	wxTaskBarIcon *taskBarIcon;
-	bool taskAvailable = false;
-	wxMenu *taskMenu;
+	void micSwitch(wxCommandEvent &event);
+	void voiceSwitch(wxCommandEvent &event);
+	void sleepChoice(wxCommandEvent &event);
+	void quit(wxCommandEvent &event);
+	void on_timer(wxTimerEvent &event);
+	void read_loop();
+
+	// app & tray
+	wxApp *app{nullptr};
+	bool useTray{false};
+	bool taskAvailable{false};
+	const wxChar *m_runDir{nullptr};
+
+	wxTaskBarIcon *taskBarIcon{nullptr};
+	wxMenu *taskMenu{nullptr};
 	wxIcon wicon;
-	wxButton *quitButton;
-	wxButton *hideButton;
-	wxString m_runDir;
-	wxStaticText *statusLabel;      // fork
-	wxStaticText *connectedLabel;   // upstream
 
-	// features box
-	wxStaticText *sleepTimerLabel;
-	wxChoice *sleepTimer;
-	wxStaticText *voicePromptLabel;
-	wxSwitchCtrl *voicePrompt;
-	wxStaticText *micMonitorLabel;
-	wxSwitchCtrl *micMonitor;
+	// timers & threads
+	wxTimer *timer{nullptr};
+	std::thread t;
 
-	// headset data
-	headset *m_headset;
-	sleep_time sleep;
-	connection_status status;
-	unsigned int battery;
-	bool micMuted;
-	bool muted;
-	bool voice;
-	bool mic_monitor;
-	unsigned long identifier;
-	const wxArrayString choices = {_T("10 Minutes"), _T("20 Minutes"),
-		_T("30 Minutes"), _T("Never")};
+	// UI elements
+	wxPanel *dialogPanel{nullptr};
+	wxStaticBitmap *dialogLogo{nullptr};
+	wxStaticText *connectedLabel{nullptr};
+	wxStaticText *sleepTimerLabel{nullptr};
+	wxStaticText *voicePromptLabel{nullptr};
+	wxStaticText *micMonitorLabel{nullptr};
+	wxStaticText *statusLabel{nullptr};
+	wxChoice *sleepTimer{nullptr};
+	wxSwitchCtrl *voicePrompt{nullptr};
+	wxSwitchCtrl *micMonitor{nullptr};
+	wxSwitchCtrl *micMute{nullptr};
+	wxButton *quitButton{nullptr};
+	wxButton *hideButton{nullptr};
 
-		// callback functions for controls
-		void createFrame();
-		void setTaskIcon();
-		void onConnect();
-		void onDisconnect();           // upstream
-		void showWindow(wxTaskBarIconEvent &event);
-		void showMenu(wxTaskBarIconEvent &event);
-		void on_micMute(wxCommandEvent &event);
-		void on_micVolume(wxCommandEvent &event);
-		void on_mute(wxCommandEvent &event);
-		void on_volume(wxCommandEvent &event);
-		void sleepChoice(wxCommandEvent &event);
-		void voiceSwitch(wxCommandEvent &event); // hide button
-		void micSwitch(wxCommandEvent &event);   // hide button
-		void quit(wxCommandEvent &event);        // quit button
+	// headset state
+	headset *m_headset{nullptr};
+	connection_status status{DISCONNECTED};
+	sleep_time sleep{S10};
+	unsigned int battery{0};
+	bool muted{false};
+	bool voice{false};
+	bool mic_monitor{false};
+	bool running{true};
+	unsigned long identifier{0};
 
-		// timer Event 5 seconds
-		wxTimer *dialogTimer;          // fork
-		wxTimer *timer;
-		void on_timer(wxTimerEvent &event);
-
-		// read loop for headset
-		bool wanted;                   // fork
-		std::atomic<bool> running;
-		std::thread t;
-		std::thread pt;                // fork
-		void read_loop();
+	// choices for sleep timer
+	const wxArrayString choices = {_T("10 Minutes"), _T("20 Minutes"), _T("30 Minutes")};
 };
 
-#endif
+#endif // __HYPERXFRAME_H

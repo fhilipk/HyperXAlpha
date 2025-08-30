@@ -49,13 +49,10 @@ public:
 	}
 
 	int read(unsigned char *buffer) {
-		// Use hid_read_timeout from upstream for a 1-second timeout
 		return hid_read_timeout(handle, buffer, 32, 1000);
 	}
 
-
 	void send_command(commands cmd) {
-		//std::cout << "Sending command 0x" << std::hex << (int)cmd << std::endl;
 		unsigned char bytes[4];
 		bytes[0] = ((long)cmd >> 24) & 0xff;
 		bytes[1] = ((long)cmd >> 16) & 0xff;
@@ -63,26 +60,25 @@ public:
 		bytes[3] = (long)cmd & 0xff;
 		int written = hid_write(handle, bytes, 4);
 		if (written == -1) {
-			std::cerr << "Error on sending command 0x" << std::hex << (int)cmd << ": " << hid_error(handle) << std::endl;
+			std::cerr << "Error sending command 0x" << std::hex << (int)cmd << ": " << hid_error(handle) << std::endl;
 		}
 	}
 
 	bool init() {
 		handle = hid_open(VENDOR_ID, PRODUCT_ID, NULL);
-		if (handle == NULL) {
-			return false;
-		}
+		if (!handle) return false;
+
 		int res = 0;
 		wchar_t man[MAX_STR], prod[MAX_STR], ser[MAX_STR];
 		res += hid_get_manufacturer_string(handle, man, MAX_STR);
 		res += hid_get_product_string(handle, prod, MAX_STR);
 		res += hid_get_serial_number_string(handle, ser, MAX_STR);
-		if (res < 0) {
-			throw std::runtime_error("Unable to read device strings");
-		}
+		if (res < 0) throw std::runtime_error("Unable to read device strings");
+
 		manufacturer = std::wstring(man);
 		product = std::wstring(prod);
 		serial = std::wstring(ser);
+
 		std::wcout << "Manufacturer: " << manufacturer << std::endl;
 		std::wcout << "Product: " << product << std::endl;
 		std::wcout << "Serial: " << serial << std::endl;
@@ -99,4 +95,5 @@ private:
 	std::wstring serial;
 	hid_device *handle;
 };
+
 #endif

@@ -4,17 +4,17 @@
 #include "hyperxFrame.h"
 #include <wx/wx.h>
 
+// Application entry point
 class hyperxApp : public wxApp {
 public:
-  hyperxApp();          // original constructor
-  hyperxApp(bool);      // upstream constructor
-  ~hyperxApp();
+  hyperxApp();
+  ~hyperxApp() override = default;
 
-  virtual bool OnInit();
+  virtual bool OnInit() override;
 
 private:
-  hyperxFrame *m_frame;
-  bool systray;         // upstream addition
+  hyperxFrame *m_frame{nullptr};
+  bool systray{false};
 };
 
-#endif
+#endif // HYPERXAPP_H
