@@ -1,15 +1,26 @@
 #include "hyperxApp.h"
-#include <iostream>
+#include <wx/wx.h>
 
-int main(int argc, char *argv[]) {
-  if (argc == 1 || std::string(argv[1]) == "--systray") {
-    wxApp *pApp = new hyperxApp();
-    hyperxApp::SetInstance(pApp);
-    wxEntry(argc, argv);
-    wxEntryCleanup();
-  } else {
-    std::cout << "HyperX Alpha Help" << std::endl;
-    std::cout << "  Use --systray to start GUI with legacy systray support!" << std::endl;
-  }
-  return 0;
+int main(int argc, char **argv) {
+  wxDISABLE_DEBUG_SUPPORT();  // avoids weird asserts in release builds
+
+  // Initialize wxWidgets
+  if ( !wxEntryStart(argc, argv) )
+    return -1;
+
+  // Create and hook up the app
+  hyperxApp *app = new hyperxApp();
+  wxTheApp = app;
+
+  if ( !app->OnInit() )
+    return -1;
+
+  // Run the wxWidgets event loop
+  int ret = wxTheApp->OnRun();
+
+  // Cleanup
+  app->OnExit();
+  wxEntryCleanup();
+
+  return ret;
 }

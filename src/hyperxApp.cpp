@@ -37,5 +37,5 @@ bool hyperxApp::OnInit() {
   return true;
 }
 
-// wxWidgets app declaration
-wxIMPLEMENT_APP(hyperxApp);
+// wxWidgets app declaration (no auto-main)
+wxIMPLEMENT_APP_NO_MAIN(hyperxApp);
