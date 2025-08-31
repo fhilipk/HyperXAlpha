@@ -2,7 +2,9 @@
 #include <wx/msgdlg.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/stdpaths.h>
 #include <iostream>
+#include <filesystem>
 
 hyperxFrame::hyperxFrame(const wxChar *title,
 						 const wxPoint &pos,
@@ -24,6 +26,13 @@ m_runDir(runDir)
 
 	timer = new wxTimer(this);
 	timer->Start(1000);
+
+	// Set cache path to writable location
+	wxString cacheDir = wxStandardPaths::Get().GetUserDataDir() + _T("/hyperxalpha_cache");
+	if (!std::filesystem::exists(cacheDir.ToStdString())) {
+		std::filesystem::create_directories(cacheDir.ToStdString());
+	}
+	m_cacheFile = cacheDir + _T("/cache.dat");
 
 	t = std::thread(&hyperxFrame::read_loop, this);
 }
