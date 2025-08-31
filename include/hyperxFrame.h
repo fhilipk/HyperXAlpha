@@ -67,6 +67,9 @@ private:
 	wxButton *quitButton{nullptr};
 	wxButton *hideButton{nullptr};
 
+	// cache file
+	wxString m_cacheFile; // <-- added
+
 	// headset state
 	headset *m_headset{nullptr};
 	connection_status status{DISCONNECTED};
