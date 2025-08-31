@@ -19,8 +19,12 @@ class hyperxApp;
 
 class hyperxFrame : public wxFrame {
 public:
-	hyperxFrame(const wxChar *title, const wxPoint &pos, const wxSize &size,
-				const wxChar *runDir, wxApp *app, bool useTray);
+	hyperxFrame(const wxChar *title,
+				const wxPoint &pos,
+			 const wxSize &size,
+			 const wxChar *runDir,
+			 wxApp *app,
+			 bool useTray);
 
 	void onConnect();
 	void onDisconnect();
@@ -61,3 +65,21 @@ private:
 	sleep_time sleep{S10};
 	unsigned int battery{0};
 	bool muted{false};
+	bool voice{false};
+	bool mic_monitor{false};
+	bool running{true};
+	unsigned long identifier{0};
+
+	// cache file path
+	wxString m_cacheFile;
+
+	// choices for sleep timer
+	const wxArrayString choices = {_T("10 Minutes"), _T("20 Minutes"), _T("30 Minutes")};
+
+	// private member functions
+	void createFrame();
+	void setTaskIcon();
+	void read_loop();
+};
+
+#endif // __HYPERXFRAME_H
