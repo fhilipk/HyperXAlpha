@@ -26,18 +26,6 @@ public:
 	void onDisconnect();
 
 private:
-	void createFrame();
-	void setTaskIcon();
-	void showWindow(wxTaskBarIconEvent &event);
-	void showMenu(wxTaskBarIconEvent &event);
-
-	void micSwitch(wxCommandEvent &event);
-	void voiceSwitch(wxCommandEvent &event);
-	void sleepChoice(wxCommandEvent &event);
-	void quit(wxCommandEvent &event);
-	void on_timer(wxTimerEvent &event);
-	void read_loop();
-
 	// app & tray
 	wxApp *app{nullptr};
 	bool useTray{false};
@@ -67,9 +55,6 @@ private:
 	wxButton *quitButton{nullptr};
 	wxButton *hideButton{nullptr};
 
-	// cache file
-	wxString m_cacheFile; // <-- added
-
 	// headset state
 	headset *m_headset{nullptr};
 	connection_status status{DISCONNECTED};
@@ -80,6 +65,9 @@ private:
 	bool mic_monitor{false};
 	bool running{true};
 	unsigned long identifier{0};
+
+	// cache file path
+	wxString m_cacheFile;
 
 	// choices for sleep timer
 	const wxArrayString choices = {_T("10 Minutes"), _T("20 Minutes"), _T("30 Minutes")};
