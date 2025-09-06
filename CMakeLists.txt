@@ -38,7 +38,10 @@ target_link_libraries(HyperX PRIVATE
     ${wxWidgets_LIBRARIES}
 )
 
-# Install target
+# Install the executable
 install(TARGETS HyperX
     RUNTIME DESTINATION bin
 )
+
+# Install image assets
+install(DIRECTORY img/ DESTINATION bin/img)
