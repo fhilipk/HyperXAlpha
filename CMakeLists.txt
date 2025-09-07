@@ -43,5 +43,8 @@ install(TARGETS HyperX
     RUNTIME DESTINATION bin
 )
 
-# Install image assets from HyperXAlpha/bin/img/
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/img/ DESTINATION bin/img)
+# Install image assets from repo's bin/img/ folder
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/img/
+    DESTINATION bin/img
+    FILES_MATCHING PATTERN "*.png"
+)
