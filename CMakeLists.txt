@@ -41,6 +41,3 @@ target_link_libraries(HyperX PRIVATE
 install(TARGETS HyperX
     RUNTIME DESTINATION bin
 )
-
-# Install image assets from HyperXAlpha/bin/img/
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/img/ DESTINATION bin/img)
